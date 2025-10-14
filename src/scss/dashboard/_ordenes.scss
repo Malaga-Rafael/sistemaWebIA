@@ -1,0 +1,56 @@
+@use 'sass:color';
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.listado-ordenes {
+    .no-ordenes {
+        text-align: center;
+        font-style: italic;
+        padding: 2rem;
+    }
+}
+
+.orden,
+.producto-orden {
+    border-bottom: 1px solid color.adjust(v.$gris, $lightness: 45%);
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: color.adjust(v.$blanco, $lightness: -3%);
+    }
+
+    td {
+        padding: .5rem 1rem;
+        text-align: center;
+        color: v.$grisOscuro;
+    }
+
+    .opciones {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-evenly;
+
+        button {
+            border: none;
+            font-size: .9rem;
+            padding: .5rem 1rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            border-radius: 1rem;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .detalle-orden {
+            background-color: v.$azul;
+            color: v.$blanco;
+        }
+
+        .cancelar-orden {
+            background-color: v.$rojo;
+            color: v.$blanco;
+        }
+    }
+}

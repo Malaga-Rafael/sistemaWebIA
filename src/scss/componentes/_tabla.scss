@@ -1,0 +1,52 @@
+@use 'sass:color';
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.seccion-ordenes {
+  margin-top: 3rem;
+
+  .titulo-seccion {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: v.$grisOscuro;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+}
+
+  .contenedor-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: v.$blanco;
+    border-radius: .5rem;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    font-size: 1.2rem;
+
+    @include m.tablet {
+      font-size: 1.5rem;
+    }
+
+    .encabezado-tabla {
+      background-color: v.$naranja;
+      color: v.$blanco;
+
+      th {
+        padding: .5rem;
+        text-align: center;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+    }
+
+    .cuerpo-tabla {
+      width: 100%;
+    }
+
+    &:last-of-type{
+        margin-bottom: 3rem;
+        }
+
+  }

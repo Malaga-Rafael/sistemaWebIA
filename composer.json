@@ -1,0 +1,22 @@
+{
+    "name": "rafae/sistema_restaurante",
+    "description": "Sistema Restaurante - Proyecto Universidad",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Rafael Malaga Chigo",
+            "email": "rafaelmalagach@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "MVC\\" : "./",
+            "Controllers\\" : "./controllers",
+            "Model\\" : "./models",
+            "Classes\\" : "./classes"
+        }
+    }
+}

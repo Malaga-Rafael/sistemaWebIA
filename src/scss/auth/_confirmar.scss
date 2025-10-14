@@ -1,0 +1,17 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.confirmar {
+    margin-top: 5rem;
+
+    .clic_eat {
+        @include m.textoDegradado (v.$naranjaOscuro);
+    }
+
+    .acciones {
+        justify-content: center;
+        a {
+            color: v.$naranjaOscuro;
+        }
+    }
+}

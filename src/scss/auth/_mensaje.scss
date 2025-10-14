@@ -1,0 +1,10 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.mensaje {
+    margin-top: 5rem;
+
+    .clic_eat {
+        @include m.textoDegradado(v.$naranja);
+    }
+}

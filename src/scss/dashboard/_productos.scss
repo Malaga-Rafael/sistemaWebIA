@@ -1,0 +1,81 @@
+@use 'sass:color';
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+
+//Boton para nuevo producto
+.contenedor-nuevo-producto {
+    display: flex;
+    justify-content: center;
+
+    .agregar-producto {
+        @include m.boton(v.$cyan, v.$blanco);
+    }
+}
+
+// Listado de los productos
+.listado-productos {
+    list-style: none;
+    padding: 0;
+    margin-top: 3rem;
+
+    // En caso de que no haya productos
+    .no-productos {
+        text-align: center;
+    }
+}
+
+// Estilo por cada producto
+.producto {
+    padding: .5rem 2rem;
+    border-bottom: 2px solid color.adjust(v.$grisClaro, $lightness: -10%);
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &:last-of-type{
+        border: none;
+    }
+
+    p {
+        font-size: 1.4rem;
+    }
+
+    // Botones de opciones
+
+    .opciones {
+
+        display: flex;
+        gap: 1rem;
+
+        button {
+            border: none;
+            font-size: .9rem;
+            padding: .5rem 1rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            border-radius: 1rem;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .disponible {
+            background-color: v.$azul;
+            color: v.$blanco;
+        }
+
+        .indisponible {
+            background-color: v.$naranja;
+            color: v.$blanco;
+        }
+
+        .eliminar-producto {
+            background-color: v.$rojo;
+            color: v.$blanco;
+        }
+    }
+
+}

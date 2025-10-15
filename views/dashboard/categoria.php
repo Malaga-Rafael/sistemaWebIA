@@ -20,6 +20,12 @@
 
 <?php
 $script = '
+    <script>
+        // Configuración global para Supabase
+        const SUPABASE_URL = "' . SUPABASE_URL . '";
+        const SUPABASE_BUCKET = "' . SUPABASE_BUCKET . '";
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     

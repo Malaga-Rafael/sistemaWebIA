@@ -26,3 +26,79 @@ function isAuth() : void {
         header('Location: /');
     }
 }
+
+
+// CAMBIOS
+/**
+ * Sube un archivo a Supabase Storage y devuelve el nombre del archivo guardado.
+ * @param array $archivo Archivo de $_FILES
+ * @return string|false Nombre del archivo en Supabase o false si falla
+ */
+function subirArchivoASupabase($archivo) {
+    if (!$archivo || $archivo['error'] !== UPLOAD_ERR_OK) {
+        return false;
+    }
+
+    $nombreOriginal = basename($archivo['name']);
+    // Generar nombre único para evitar colisiones
+    $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
+    $nombreUnico = uniqid() . '.' . strtolower($extension);
+
+    $url = SUPABASE_URL . "/storage/v1/object/" . SUPABASE_BUCKET . "/" . rawurlencode($nombreUnico);
+
+    $contenido = file_get_contents($archivo['tmp_name']);
+    if ($contenido === false) {
+        return false;
+    }
+
+    $headers = [
+        'apikey: ' . SUPABASE_KEY,
+        'Authorization: Bearer ' . SUPABASE_KEY,
+        'Content-Type: ' . $archivo['type']
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $contenido);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Solo desarrollo
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    $respuesta = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200) {
+        return $nombreUnico; // Solo el nombre, no la URL completa
+    }
+
+    return false;
+}
+
+/**
+ * Elimina un archivo de Supabase Storage
+ * @param string $nombreArchivo Nombre del archivo en el bucket
+ * @return bool true si se eliminó, false si falló
+ */
+function eliminarArchivoDeSupabase($nombreArchivo) {
+    if (empty($nombreArchivo)) return false;
+
+    $url = SUPABASE_URL . "/storage/v1/object/" . SUPABASE_BUCKET . "/" . rawurlencode($nombreArchivo);
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'apikey: ' . SUPABASE_KEY,
+        'Authorization: Bearer ' . SUPABASE_KEY
+    ]);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    $respuesta = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return $httpCode === 200;
+}

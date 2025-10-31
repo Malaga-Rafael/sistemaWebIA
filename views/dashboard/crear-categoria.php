@@ -3,7 +3,7 @@
 <div class="contenedor-sm">
     <?php include_once __DIR__ . '/../templates/alertas.php'; ?>
     
-    <form class="formulario" method="POST" action="/crear-categoria">
+    <form class="formulario" method="POST" enctype="multipart/form-data" action="/crear-categoria">
 
         <?php include_once __DIR__ . '/formulario-categoria.php'; ?>
         
@@ -12,3 +12,7 @@
 
 </div>
 <?php include_once __DIR__ . '/footer-dashboard.php'; ?>
+
+<?php
+    $script .= '<script src="build/js/app.js"</script>';
+?>

@@ -25,10 +25,12 @@
         color: v.$grisOscuro;
     }
 
-    .opciones {
+    .opciones,
+    .contenedor-estatus {
         display: flex;
         gap: 1rem;
         justify-content: space-evenly;
+        align-items: center;
 
         button {
             border: none;
@@ -50,6 +52,41 @@
 
         .cancelar-orden {
             background-color: v.$rojo;
+            color: v.$blanco;
+        }
+
+        .pendiente {
+            background-color: color.adjust(v.$grisClaro, $lightness: -5%);
+            color: v.$negro;
+        }
+
+        .confirmada {
+            background-color: v.$azul;
+            color: v.$blanco;
+        }
+
+        .en-proceso {
+            background-color: v.$ambar;
+            color: v.$blanco;
+        }
+
+        .enviada {
+            background-color: v.$verdeAzulado;
+            color: v.$blanco;
+        }
+
+        .entregada {
+            background-color: v.$verde;
+            color: v.$blanco;
+        }
+
+        .cancelada {
+            background-color: v.$rojoSuave;
+            color: v.$blanco;
+        }
+
+        .rechazada {
+            background-color: v.$morado;
             color: v.$blanco;
         }
     }

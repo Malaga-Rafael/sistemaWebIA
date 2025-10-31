@@ -45,6 +45,9 @@
             nombreProducto.textContent = producto.nombre;
             nombreProducto.ondblclick = () => mostrarFormulario(true, { ...producto });
 
+            const precioProducto = document.createElement('P');
+            precioProducto.textContent = `$ ${producto.precio}`;
+
             const opcionesDiv = document.createElement('DIV');
             opcionesDiv.classList.add('opciones');
 
@@ -63,6 +66,8 @@
             opcionesDiv.appendChild(btnEliminarProducto);
 
             contenedorProducto.appendChild(nombreProducto);
+            contenedorProducto.appendChild(precioProducto);
+
             contenedorProducto.appendChild(opcionesDiv);
 
             document.querySelector('#listado-productos')?.appendChild(contenedorProducto);
@@ -77,22 +82,53 @@
                 <legend>${editar ? 'Editar Producto' : 'Añade un nuevo producto'}</legend>
                 <div class="campo">
                     <label>Producto</label>
-                    <input type="text" name="producto" id="producto" value="${producto.nombre || ''}" required />
+                    <input 
+                        type="text" 
+                        name="producto" 
+                        placeholder="${producto.nombre ? 'Editar Producto' : 'Añadir producto a la categoría actual'}"
+                        id="producto" 
+                        value="${producto.nombre ? producto.nombre : ''}"
+                    />
                 </div>
                 <div class="campo">
                     <label>Descripción</label>
-                    <input type="text" name="descripcion" id="descripcion" value="${producto.descripcion || ''}" />
+                    <input
+                        type="text"
+                        name="descripcion"
+                        placeholder="${producto.nombre ? 'Editar descripción' : 'Añadir una descripción al producto'}"
+                        id="descripcion"
+                        value="${producto.descripcion ? producto.descripcion : ''}"
+                    />
                 </div>
                 <div class="campo">
-                    <label for="imagen1">Imagen 1</label>
-                    <input type="file" id="imagen1" accept="image/jpeg, image/png" />
+                    <label>Precio</label>
+                    <input
+                        type="text"
+                        name="precio"
+                        placeholder="${producto.precio ? 'Editar precio' : 'Añadir un precio al producto'}"
+                        id="precio"
+                        value="${producto.precio ? producto.precio : ''}"
+                    / >
                 </div>
-                <div class="campo">
-                    <label for="imagen2">Imagen 2</label>
-                    <input type="file" id="imagen2" accept="image/jpeg, image/png" />
+
+                <div class="subir-imagen">
+                    <div class="campo imagen">
+                        <input type="file" id="imagen1" accept="image/jpeg, image/png" />
+                        <label class="btn-imagen" for="imagen1">Imagen 1</label>
+                    </div>
+                    <div class="campo imagen">
+                        <input type="file" id="imagen2" accept="image/jpeg, image/png" />
+                        <label class="btn-imagen" for="imagen2">Imagen 2</label>
+                    </div>
                 </div>
+                
+
                 <div class="opciones">
-                    <input type="submit" class="submit-nuevo-producto" value="${editar ? 'Guardar Cambios' : 'Añadir Producto'}" />
+                    <input 
+                        type="submit" 
+                        class="submit-nuevo-producto" 
+                        value="${editar ? 'Guardar Cambios' : 'Añadir Producto'}" 
+                    />
                     <button type="button" class="cerrar-modal">Cancelar</button>
                 </div>
             </form>
@@ -105,15 +141,17 @@
 
             if (producto.imagen1) {
                 const img1 = document.createElement('img');
-                img1.src = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${producto.imagen1}`;
-                img1.style.width = '100px'; img1.style.marginTop = '10px';
+                img1.classList.add('preview-img')
+                img1.src = producto.imagen1;
+                img1.style.width = '80px'; img1.style.marginTop = '5px';
                 campoImagen1.appendChild(img1);
             }
 
             if (producto.imagen2) {
                 const img2 = document.createElement('img');
-                img2.src = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${producto.imagen2}`;
-                img2.style.width = '100px'; img2.style.marginTop = '10px';
+                img2.classList.add('preview-img')
+                img2.src = producto.imagen2;
+                img2.style.width = '80px'; img2.style.marginTop = '5px';
                 campoImagen2.appendChild(img2);
             }
         }
@@ -138,6 +176,7 @@
                 e.preventDefault();
                 const nombre = document.querySelector('#producto').value.trim();
                 const descripcion = document.querySelector('#descripcion').value.trim();
+                const precio = document.querySelector('#precio').value.trim();
 
                 if (!nombre) {
                     mostrarAlerta('El nombre del producto es obligatorio', 'error', modal.querySelector('legend'));
@@ -147,14 +186,19 @@
                 if (editar) {
                     producto.nombre = nombre;
                     producto.descripcion = descripcion;
+                    producto.precio = precio;
                     actualizarProducto(producto);
                 } else {
-                    agregarProducto(nombre, descripcion);
+                    agregarProducto(nombre, descripcion, precio);
                 }
             }
         });
 
         document.querySelector('.dashboard')?.appendChild(modal);
+
+        setupImagePreview(modal, 'imagen1');
+        setupImagePreview(modal, 'imagen2');
+
     }
 
     function mostrarAlerta(mensaje, tipo, referencia) {
@@ -165,14 +209,18 @@
         alerta.classList.add('alerta', tipo);
         alerta.textContent = mensaje;
 
-        referencia?.parentElement?.insertBefore(alerta, referencia.nextElementSibling);
-        setTimeout(() => alerta.remove(), 5000);
+        referencia.parentElement.insertBefore(alerta, referencia.nextElementSibling);
+        
+        setTimeout(() => {
+            alerta.remove();
+        }, 5000);
     }
 
-    async function agregarProducto(nombre, descripcion) {
+    async function agregarProducto(nombre, descripcion, precio) {
         const datos = new FormData();
         datos.append('nombre', nombre);
         datos.append('descripcion', descripcion);
+        datos.append('precio', precio);
         datos.append('categoriaId', obtenerCategoria());
 
         const imagen1 = document.querySelector('#imagen1').files[0];
@@ -182,7 +230,10 @@
 
         try {
             const url = '/api/producto'; // Usa ruta relativa
-            const respuesta = await fetch(url, { method: 'POST', body: datos });
+            const respuesta = await fetch(url, {
+                method: 'POST',
+                body: datos
+            });
             const resultado = await respuesta.json();
 
             mostrarAlerta(resultado.mensaje, resultado.tipo, document.querySelector('.modal legend'));
@@ -191,12 +242,14 @@
                 // Limpiar formulario
                 document.querySelector('#producto').value = '';
                 document.querySelector('#descripcion').value = '';
+                document.querySelector('#precio').value = '';
 
                 // Agregar a la lista local
                 const nuevoProducto = {
                     id: String(resultado.id),
                     nombre,
                     descripcion,
+                    precio,
                     disponible: "1",
                     imagen1: resultado.imagen1 || null,
                     imagen2: resultado.imagen2 || null,
@@ -227,6 +280,7 @@
         datos.append('id', producto.id);
         datos.append('nombre', producto.nombre);
         datos.append('descripcion', producto.descripcion);
+        datos.append('precio', producto.precio);
         datos.append('categoriaId', obtenerCategoria());
         datos.append('disponible', producto.disponible);
 
@@ -250,6 +304,7 @@
                             ...p,
                             nombre: producto.nombre,
                             descripcion: producto.descripcion,
+                            precio: producto.precio,
                             disponible: producto.disponible,
                             imagen1: resultado.respuesta.imagen1 ?? p.imagen1,
                             imagen2: resultado.respuesta.imagen2 ?? p.imagen2
@@ -313,5 +368,41 @@
             contenedor.removeChild(contenedor.firstChild);
         }
     }
+
+    function setupImagePreview(modal, inputId) {
+        const input = modal.querySelector(`#${inputId}`);
+        if (!input) {
+            console.warn(`Input ${inputId} no encontrado`);
+            return;
+        }
+
+        input.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const container = input.closest('.campo');
+
+            if (!container) {
+                console.error('Contenedor .campo no encontrado');
+                return;
+            }
+
+            // Eliminar preview anterior
+            const oldPreview = container.querySelector('.preview-img');
+            if (oldPreview) oldPreview.remove();
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.classList.add('preview-img'); // ← ahora se controla desde CSS
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // 👇 Exponer función para que otros scripts (como socket-client.js) puedan usarla
+
 
 })();

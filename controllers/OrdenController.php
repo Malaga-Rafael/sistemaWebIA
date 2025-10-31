@@ -7,6 +7,7 @@ use Model\DetalleOrden;
 use Model\Direccion;
 use Model\EstatusOrden;
 use Model\Orden;
+use Model\Pagos;
 use Model\Producto;
 
 class OrdenController
@@ -20,23 +21,9 @@ class OrdenController
         $restauranteId = $_SESSION['restauranteId'];
 
         // Traer las ordenes del restaurante
-        $ordenes = Orden::belongsTo('restauranteId', $restauranteId);
+        //$ordenes = Orden::belongsTo('restauranteId', $restauranteId);
 
-        foreach ($ordenes as $orden) {
-            $cliente = Cliente::find($orden->clienteId);
-            $orden->nombreCliente = $cliente->nombre . " " . $cliente->apellido;
-
-            $estatus = EstatusOrden::find($orden->estatusId);
-            $orden->nombreEstatus = $estatus ? $estatus->nombre : 'Sin estatus';
-
-            if (!empty($orden->direccionId)) {
-                $direccion = Direccion::find($orden->direccionId);
-                $orden->direccionCompleta = $direccion ? $direccion->direccion : 'Sin direccion';
-                $orden->direccionReferencia = $direccion ? $direccion->referencia : 'Sin referencia';
-            } else {
-                $orden->direccionCompleta = 'No aplica';
-            }
-        }
+        $ordenes = Orden::ordenesConDetalles($restauranteId);
 
         // header('Content-Type: application/json');
         echo json_encode(['ordenes' => $ordenes]);
@@ -45,46 +32,44 @@ class OrdenController
     public static function actualizar()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
             $ordenId = $_POST['id'];
-            $estatus = EstatusOrden::where('id', $_POST['estatusId']);
+            $estatusId = $_POST['estatusId'];
+
+            //Validar existencia de orden y estatus
             $orden = Orden::find($ordenId);
+            if (!$orden) {
+                echo json_encode(['respuesta' => ['tipo' => 'error', 'mensaje' => 'Orden no existe']]);
+                return;
+            }
+
+            $estatus = EstatusOrden::find($estatusId);
+            if (!$estatus) {
+                echo json_encode(['respuesta' => ['tipo' => 'error', 'mensaje' => 'Estatus inválido']]);
+                return;
+            }
 
             session_start();
+            $restauranteId = $_SESSION['restauranteId'] ?? null;
 
-            $restauranteId = $_SESSION['restauranteId'];
-
-            if (!$orden) {
-                $respuesta = [
-                    'tipo' => 'error',
-                    'mensaje' => 'Orden No Existe'
-                ];
-                echo json_encode(['respuesta' => $respuesta]);
+            if (!$restauranteId || $orden->restauranteId != $restauranteId) {
+                echo json_encode(['respuesta' => ['tipo' => 'error', 'mensaje' => 'No puedes modificar esta orden']]);
                 return;
             }
 
-            if ($orden->restauranteId !== $restauranteId) {
-                $respuesta = [
-                    'tipo' => 'error',
-                    'mensaje' => 'No puedes modificar esta orden'
-                ];
-                echo json_encode(['respuesta' => $respuesta]);
-                return;
-            }
-
-            //$orden = new Orden($_POST);
-            $orden->estatusId = $estatus->id;
+            //Asignar las nuevas actualizaciones
+            $orden->estatusId = $estatusId;
 
             $resultado = $orden->guardar();
 
             if ($resultado) {
-                $respuesta = [
-                    'tipo' => 'exito',
-                    'id' => $orden->id,
-                    'estatusId' => $estatus->id,
-                    'mensaje' => 'Actualizado Correctamente'
-                ];
-                echo json_encode(['respuesta' => $respuesta]);
+                echo json_encode([
+                    'respuesta' => [
+                        'tipo' => 'exito',
+                        'mensaje' => 'Actualizado correctamente',
+                        'id' => $orden->id,
+                        'estatusId' => $orden->estatusId
+                    ]
+                ]);
             }
         }
     }
@@ -111,9 +96,10 @@ class OrdenController
 
         $detalles = DetalleOrden::belongsTo('ordenId', $orden->id);
 
-        $producto = [];
+        $pago = Pagos::where('ordenId', $orden->id);
 
-        foreach($detalles as $detalle){
+        $producto = [];
+        foreach ($detalles as $detalle) {
             $producto = Producto::find($detalle->productoId);
 
             $productos[] = [
@@ -122,8 +108,13 @@ class OrdenController
                 'precioProducto' => $producto->precio,
                 'cantidadProducto' => $detalle->cantidad
             ];
+
+            $respuesta = [
+                'productos' => $productos,
+                'pago' => $pago
+            ];
         }
 
-        echo json_encode(['productos' => $productos]);
+        echo json_encode(['respuesta' => $respuesta]);
     }
 }

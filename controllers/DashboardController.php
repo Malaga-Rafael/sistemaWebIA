@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Model\Categoria;
 use Model\Orden;
+use Model\Usuario;
 use MVC\Router;
 
 class DashboardController
@@ -13,6 +14,11 @@ class DashboardController
     {
         session_start();
         isAuth();
+
+        // === Evitar caché ===
+        header("Cache-Control: no-cache, no-store, must-revalidate");
+        header("Pragma: no-cache");
+        header("Expires: 0");
 
         $restauranteId = $_SESSION['restauranteId'];
 
@@ -41,7 +47,6 @@ class DashboardController
 
     public static function crear_categoria(Router $router)
     {
-
         session_start();
         isAuth();
 
@@ -51,16 +56,30 @@ class DashboardController
 
             $categoria = new Categoria($_POST);
 
-            //Alertas
+            // Validar datos básicos
             $alertas = $categoria->validarCategoria();
 
-            if (empty($alertas)) {
+            // Subir imagen si existe
+            $imagenUrl = null;
+            if (!empty($_FILES['imagen1']) && $_FILES['imagen1']['error'] === UPLOAD_ERR_OK) {
+                $imagenUrl = subirArchivoASupabase($_FILES['imagen1'], 'Categorias');
+                if (!$imagenUrl) {
+                    $alertas[] = 'Error al subir la imagen. Inténtalo de nuevo.';
+                }
+            }
 
+            if (empty($alertas)) {
                 $categoria->restauranteId = $_SESSION['restauranteId'];
+                $categoria->imagen = $imagenUrl; // Guardar la URL en el modelo
 
                 $resultado = $categoria->guardar();
 
-                header('Location: /categoria?id=' . $resultado['id']);
+                if ($resultado) {
+                    header('Location: /categoria?id=' . $resultado['id']);
+                    exit;
+                } else {
+                    $alertas[] = 'Error al guardar la categoría.';
+                }
             }
         }
 
@@ -92,11 +111,103 @@ class DashboardController
         ]);
     }
 
+    public static function rol(Router $router)
+    {
+        session_start();
+        isAuth();
+
+        $restauranteId = $_SESSION['restauranteId'];
+
+        $router->render('dashboard/rol', [
+            'titulo' => 'ROLES',
+            'restauranteId' => $restauranteId
+        ]);
+    }
+
     public static function perfil(Router $router)
     {
+        session_start();
+        isAuth();
+        $alertas = [];
+
+        $usuario = Usuario::find($_SESSION['id']);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $usuario->sincronizar($_POST);
+
+            $alertas = $usuario->validar_perfil();
+
+            if (empty($alertas)) {
+
+                $existeUsuario = Usuario::where('email', $usuario->email);
+
+                if ($existeUsuario && $existeUsuario->id !== $usuario->id) {
+                    Usuario::setAlerta('error', 'Email no válido, ya pertence a otra cuenta');
+                    $alertas = $usuario->getAlertas();
+                } else {
+                    $usuario->guardar();
+
+                    Usuario::setAlerta('exito', 'Guardado Correctamente');
+                    $alertas = $usuario->getAlertas();
+
+                    $_SESSION['nombre'] = $usuario->nombre;
+                }
+            }
+        }
 
         $router->render('dashboard/perfil', [
-            'titulo' => 'PERFIL'
+            'alertas' => $alertas,
+            'titulo' => 'PERFIL',
+            'usuario' => $usuario
+        ]);
+    }
+
+    public static function cambiar_password(Router $router)
+    {
+        session_start();
+        isAuth();
+
+        $alertas = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $usuario = Usuario::find($_SESSION['id']);
+
+            $usuario->sincronizar($_POST);
+
+            $alertas = $usuario->nuevo_password();
+
+            if (empty($alertas)) {
+                $resultado = $usuario->comprobar_password();
+
+                if ($resultado) {
+                    $usuario->password = $usuario->password_nuevo;
+
+                    //Eliminacion de propiedades innecesarias
+                    unset($usuario->password_actual);
+                    unset($usuario->password_nuevo);
+
+                    //Hashear el password
+                    $usuario->hashPassword();
+
+                    //Actualizar
+                    $resultado = $usuario->guardar();
+
+                    if ($resultado) {
+                        Usuario::setAlerta('exito', 'Password Guardado Correctamente');
+                        $alertas = $usuario->getAlertas();
+                    }
+                } else {
+                    Usuario::setAlerta('error', 'Password Incorrecto');
+                    $alertas = $usuario->getAlertas();
+                }
+            }
+        }
+
+        $router->render('dashboard/cambiar-password', [
+            'alertas' => $alertas,
+            'titulo' => 'CAMBIAR PASSWORD'
+
         ]);
     }
 }

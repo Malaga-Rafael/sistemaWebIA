@@ -81,24 +81,25 @@ class ProductoController
             }
 
             // Subir imágenes si existen
-            $imagen1Nombre = null;
-            $imagen2Nombre = null;
+            $imagen1Url = null;
+            $imagen2Url = null;
 
             if (!empty($_FILES['imagen1']) && $_FILES['imagen1']['error'] === UPLOAD_ERR_OK) {
-                $imagen1Nombre = subirArchivoASupabase($_FILES['imagen1']);
+                $imagen1Url = subirArchivoASupabase($_FILES['imagen1'],'Productos');
             }
 
             if (!empty($_FILES['imagen2']) && $_FILES['imagen2']['error'] === UPLOAD_ERR_OK) {
-                $imagen2Nombre = subirArchivoASupabase($_FILES['imagen2']);
+                $imagen2Url = subirArchivoASupabase($_FILES['imagen2'], 'Productos');
             }
 
             // Crear producto con los datos
             $producto = new Producto([
                 'nombre' => $_POST['nombre'] ?? '',
                 'descripcion' => $_POST['descripcion'] ?? '',
+                'precio' => $_POST['precio'] ?? '',
                 'categoriaId' => $categoriaId,
-                'imagen1' => $imagen1Nombre,
-                'imagen2' => $imagen2Nombre,
+                'imagen1' => $imagen1Url,
+                'imagen2' => $imagen2Url,
                 'disponible' => 1, // o el valor por defecto que uses
                 // ... otros campos que necesites
             ]);
@@ -113,8 +114,8 @@ class ProductoController
                     'categoriaId' => $categoria->id,
                     'fecha_creacion' => $producto->fecha_creacion,
                     'fecha_actualizacion' => $producto->fecha_actualizacion,
-                    'imagen1' => $imagen1Nombre,
-                    'imagen2' => $imagen2Nombre
+                    'imagen1' => $imagen1Url,
+                    'imagen2' => $imagen2Url
                 ]);
             } else {
                 echo json_encode([
@@ -215,6 +216,7 @@ class ProductoController
                 'id' => $_POST['id'],
                 'nombre' => $_POST['nombre'] ?? '',
                 'descripcion' => $_POST['descripcion'] ?? '',
+                'precio' => $_POST['precio'] ?? '',
                 'disponible' => $_POST['disponible'] ?? $productoActual->disponible,
                 'categoriaId' => $categoria->id,
                 'imagen1' => $imagen1Nombre,

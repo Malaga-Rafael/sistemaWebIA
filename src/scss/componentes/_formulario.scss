@@ -27,4 +27,37 @@
         }
     }
 
+    .subir-imagen {
+
+        .imagen {
+            input[type="file"] {
+                display: none;
+                justify-content: center
+            }
+
+            .btn-imagen {
+                @include m.boton(v.$cyan, v.$blanco);
+
+                & {
+                    padding: 1rem;
+                    border-radius: .5rem;
+                    font-size: 1rem;
+                    text-transform: uppercase;
+                }
+
+                @include m.telefono {
+                    width: auto;
+                }
+            }
+
+            .preview-img {
+                max-width: 10rem;
+                margin-top: .8rem;
+                border-radius: .5rem;
+                display: block;
+            }
+        }
+
+    }
+
 }

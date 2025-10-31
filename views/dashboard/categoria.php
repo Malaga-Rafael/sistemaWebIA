@@ -19,7 +19,7 @@
 <?php include_once __DIR__ . '/footer-dashboard.php'; ?>
 
 <?php
-$script = '
+$script .= '
     <script>
         // Configuración global para Supabase
         const SUPABASE_URL = "' . SUPABASE_URL . '";

@@ -1,0 +1,47 @@
+@use 'sass:color';
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+
+//Boton para nuevo producto
+.contenedor-nuevo-rol {
+    display: flex;
+    justify-content: center;
+
+    .agregar-rol {
+        @include m.boton(v.$cyan, v.$blanco);
+    }
+}
+
+// Listado de los productos
+.listado-roles {
+    list-style: none;
+    padding: 0;
+    margin-top: 3rem;
+
+    // En caso de que no haya productos
+    .no-roles {
+        text-align: center;
+    }
+}
+
+// Estilo por cada producto
+.rol {
+    padding: .5rem 2rem;
+    border-bottom: 2px solid color.adjust(v.$grisClaro, $lightness: -10%);
+    margin-bottom: 1rem;
+    //display: flex;
+    display: grid;
+    grid-template-columns: 3fr 2fr 1fr;
+
+    align-items: center;
+
+    &:last-of-type {
+        border: none;
+    }
+
+    p {
+        font-size: 1.4rem;
+    }
+
+}

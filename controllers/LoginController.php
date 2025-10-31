@@ -15,7 +15,7 @@ class LoginController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = new Usuario($_POST);
-            
+
             $alertas = $usuario->validarLogin();
 
             if (empty($alertas)) {
@@ -54,10 +54,30 @@ class LoginController
     public static function logout()
     {
         session_start();
-        
+
+        // Destruir todas las variables de sesión
         $_SESSION = [];
 
+        // Si se usa una cookie de sesión, eliminarla
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        // Destruir la sesión
+        session_destroy();
+
+        // Redirigir al login (o a la raíz)
         header('Location: /');
+        exit(); // ¡Importante!
     }
 
     public static function crear(Router $router)
@@ -73,7 +93,7 @@ class LoginController
             $datosRestaurante = [
                 'nombre' => $_POST['restaurante'] ?? '',
             ];
-            
+
             $datosUsuario = [
                 'nombre' => $_POST['nombre'] ?? '',
                 'email' => $_POST['email'] ?? '',
@@ -88,7 +108,7 @@ class LoginController
 
             $alertasRestaurante = $restaurante->validarRestauranteCuentaNueva();
             $alertasUsuario = $usuario->validarUsuarioNuevaCuenta();
-            
+
             $alertas = array_merge($alertasRestaurante, $alertasUsuario);
 
             if (empty($alertas)) {
@@ -118,11 +138,11 @@ class LoginController
                         $usuario->rolId = 1;
 
                         $resultadoUsuario = $usuario->guardar();
-                        
+
                         // Enviar Email
                         $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
                         $email->enviarConfirmacion();
-                        
+
                         if ($resultadoUsuario) {
                             header('Location: /mensaje');
                         }

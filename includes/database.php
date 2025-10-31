@@ -1,6 +1,7 @@
 <?php
 
-$db = mysqli_connect('centerbeam.proxy.rlwy.net', 'root', 'jKaOeyPuPkQMpqSnQVUbWwpgLnkLLShw', 'railway',13384);
+$db = mysqli_connect('ballast.proxy.rlwy.net', 'root', 'wEKuqgIzteFPNwvkktXDlrLjQUrEgiVU', 'railway',33845);
+//$db = mysqli_connect('centerbeam.proxy.rlwy.net', 'root', 'jKaOeyPuPkQMpqSnQVUbWwpgLnkLLShw', 'railway',13384);
 //$db = mysqli_connect('localhost', 'root', 'root', 'restaurantedb');
 
 if (!$db) {

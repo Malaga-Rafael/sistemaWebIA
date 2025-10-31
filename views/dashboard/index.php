@@ -16,7 +16,7 @@
                     <th>Opciones</th>
                 </tr>
             </thead>
-            <tbody id="listado-ordenes" class="cuerpo-tabla listado-ordenes"></tbody>
+            <tbody id="listado-sitio" class="cuerpo-tabla listado-ordenes"></tbody>
         </table>
 
     </section>
@@ -36,7 +36,7 @@
                     <th>Opciones</th>
                 </tr>
             </thead>
-            <tbody id="listado-ordenes" class="listado-ordenes"></tbody>
+            <tbody id="listado-domicilio" class="cuerpo-tabla listado-ordenes"></tbody>
         </table>
 
     </section>
@@ -52,9 +52,10 @@
                     <th>Cliente</th>
                     <th>Estado</th>
                     <th>Fecha</th>
+                    <th>Opciones</th>
                 </tr>
             </thead>
-            <tbody id="listado-ordenes" class="listado-ordenes"></tbody>
+            <tbody id="listado-anticipado" class="listado-ordenes"></tbody>
         </table>
 
     </section>
@@ -64,8 +65,10 @@
 <?php include_once __DIR__ . '/footer-dashboard.php'; ?>
 
 <?php
-$script = '
+$script .= '
+    <script src="build/js/app.js"</script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="build/js/ordenes.js"></script>
+    <script src="build/js/socket-client.js"></script>
 ';
 ?>

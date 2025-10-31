@@ -5,7 +5,9 @@ require_once __DIR__ . '/../includes/app.php';
 use Controllers\LoginController;
 use Controllers\DashboardController;
 use Controllers\OrdenController;
+use Controllers\PagoController;
 use Controllers\ProductoController;
+use Controllers\RolController;
 use MVC\Router;
 
 $router =  new Router();
@@ -36,27 +38,47 @@ $router->get('/confirmar', [LoginController::class, 'confirmar']);
 
 // APARTADOS DEL DASHBOARD
 
+//ORDENES
 $router->get('/dashboard', [DashboardController::class, 'index']);
-$router->get('/existencia', [DashboardController::class, 'existencia']);
 
+//CATEGORIA -> PRODUCTOS
+$router->get('/existencia', [DashboardController::class, 'existencia']);
+$router->get('/categoria', [DashboardController::class, 'categoria']);
+
+//CATEGORIAS
+$router->get('/rol', [DashboardController::class, 'rol']);
+
+//ROLES
 $router->get('/crear-categoria', [DashboardController::class, 'crear_categoria']);
 $router->post('/crear-categoria', [DashboardController::class, 'crear_categoria']);
 
-$router->get('/categoria', [DashboardController::class, 'categoria']);
+// PERFIL
+$router->get('/perfil', [DashboardController::class, 'perfil']);
+$router->post('/perfil', [DashboardController::class, 'perfil']);
 
-//$router->get('/perfil', [DashboardController::class, 'perfil']);
+$router->get('/cambiar-password', [ DashboardController::class, 'cambiar_password']);
+$router->post('/cambiar-password', [ DashboardController::class, 'cambiar_password']);
 
-// API para las tareas
+// API DE LOS PRODUCTOS
 $router->get('/api/productos', [ProductoController::class, 'index']);
 $router->post('/api/producto', [ProductoController::class, 'crear']);
 $router->post('/api/producto/actualizar', [ProductoController::class, 'actualizar']);
 $router->post('/api/producto/eliminar', [ProductoController::class, 'eliminar']);
 
-// API para las ordenes
+// API PARA LAS ORDENES
 $router->get('/api/ordenes', [OrdenController::class, 'index']);
 $router->get('/api/orden', [OrdenController::class, 'detalle']);
 $router->post('/api/orden/actualizar', [OrdenController::class, 'actualizar']);
 //$router->get('api/orden/cancelar', [OrdenController::class,'cancelar']);
+
+// APLI PARA LOS PAGOS
+$router->post('/api/pago/actualizar', [PagoController::class, 'actualizar']);
+
+// API PARA LOS ROLES
+$router->get('/api/roles', [RolController::class, 'index']);
+$router->post('/api/rol', [RolController::class, 'crear']);
+$router->post('/api/actualizar', [RolController::class, 'actualizar']);
+
 
 // Comprueba y valida las rutas, que existen y les asigna las funciones del Controlador
 $router->comprobarRutas();

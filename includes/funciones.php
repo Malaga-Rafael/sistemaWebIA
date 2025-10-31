@@ -1,9 +1,12 @@
 <?php
 
-define('SUPABASE_URL', 'https://udpxrrllqezfgdseetrj.supabase.co'); 
-define('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkcHhycmxscWV6Zmdkc2VldHJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyNTE0NjksImV4cCI6MjA3NDgyNzQ2OX0.EoR0noNXdDa5p15ARNt-iwXfm8k0lVmitN3o1g2fEwk');
-define('SUPABASE_BUCKET', 'productos'); // nombre del bucket que crearás en Supabase
+//define('SUPABASE_URL', 'https://udpxrrllqezfgdseetrj.supabase.co'); 
+//define('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkcHhycmxscWV6Zmdkc2VldHJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyNTE0NjksImV4cCI6MjA3NDgyNzQ2OX0.EoR0noNXdDa5p15ARNt-iwXfm8k0lVmitN3o1g2fEwk');
+//define('SUPABASE_BUCKET', 'productos'); // nombre del bucket que crearás en Supabase
 
+define('SUPABASE_URL', 'https://cvmoqmramfokunnngjrq.supabase.co'); 
+define('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bW9xbXJhbWZva3Vubm5nanJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3MDM3NjQsImV4cCI6MjA3NjI3OTc2NH0.u2YD1c8uP847eX3zwg_QiXzB4cp9sO62ktC2vcLRLuo');
+define('SUPABASE_BUCKET', 'clients'); // nombre del bucket que crearás en Supabase
 
 // Ver el contenido de una variable en ejecución
 function debuguear($variable) : string {
@@ -22,8 +25,9 @@ function s($html) : string {
 
 // Revisar que el usuario este autenticado
 function isAuth() : void {
-    if (!isset($_SESSION['login'])) {
+    if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
         header('Location: /');
+        exit();
     }
 }
 
@@ -34,17 +38,21 @@ function isAuth() : void {
  * @param array $archivo Archivo de $_FILES
  * @return string|false Nombre del archivo en Supabase o false si falla
  */
-function subirArchivoASupabase($archivo) {
+function subirArchivoASupabase($archivo, $carpeta = '') {
     if (!$archivo || $archivo['error'] !== UPLOAD_ERR_OK) {
         return false;
     }
 
     $nombreOriginal = basename($archivo['name']);
-    // Generar nombre único para evitar colisiones
     $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
+    //Asegura extension en minusculas y evita nombres vacios
+    $extension = $extension ? strtolower($extension) : 'jpg';
     $nombreUnico = uniqid() . '.' . strtolower($extension);
 
-    $url = SUPABASE_URL . "/storage/v1/object/" . SUPABASE_BUCKET . "/" . rawurlencode($nombreUnico);
+    //Construir la ruta con la carpeta
+    $rutaArchivo = $carpeta ? rtrim($carpeta, '/') . '/' . $nombreUnico : $nombreUnico;
+
+    $url = SUPABASE_URL . "/storage/v1/object/" . SUPABASE_BUCKET . "/" . rawurlencode($rutaArchivo);
 
     $contenido = file_get_contents($archivo['tmp_name']);
     if ($contenido === false) {
@@ -54,7 +62,7 @@ function subirArchivoASupabase($archivo) {
     $headers = [
         'apikey: ' . SUPABASE_KEY,
         'Authorization: Bearer ' . SUPABASE_KEY,
-        'Content-Type: ' . $archivo['type']
+        'Content-Type: ' . ($archivo['type'] ?: 'application/octet-stream')
     ];
 
     $ch = curl_init($url);
@@ -69,10 +77,13 @@ function subirArchivoASupabase($archivo) {
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    if ($httpCode === 200) {
-        return $nombreUnico; // Solo el nombre, no la URL completa
+    if ($httpCode === 200 || $httpCode === 201) {
+        //Devolver la URL publica completa
+        $publicUrl = SUPABASE_URL . "/storage/v1/object/public/" . SUPABASE_BUCKET . "/" . rawurlencode($rutaArchivo);
+        return $publicUrl; 
     }
 
+    error_log("Error al subir a Supabase: HTTP $httpCode, respuesta: $respuesta");
     return false;
 }
 

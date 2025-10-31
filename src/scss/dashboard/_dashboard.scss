@@ -1,3 +1,4 @@
+@use "sass:color";
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
 
@@ -8,7 +9,7 @@
         display: flex;
         height: 100vh;
     }
-    
+
     .principal {
         flex: 1;
         overflow: scroll;
@@ -16,6 +17,7 @@
 
     .contenido {
         padding: 2rem;
+
         .nombre-pagina {
             font-size: 1.8rem;
             text-align: center;
@@ -23,18 +25,26 @@
     }
 
     .formulario {
-        input:not([type="submit"]){
+        input:not([type="submit"]) {
             background-color: v.$blanco;
         }
 
-        input[type="submit"]{
+        input[type="submit"] {
             @include m.boton(v.$naranjaOscuro, v.$blanco);
+
             & {
                 padding: 1rem;
                 text-transform: uppercase;
                 font-weight: bold;
                 font-size: 1.4rem;
             }
+        }
+    }
+
+    .enlace {
+        color: v.$indigo;
+        &:hover {
+            color: color.adjust(v.$indigo, $lightness: 20%);
         }
     }
 }

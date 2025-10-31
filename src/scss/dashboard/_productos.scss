@@ -30,11 +30,13 @@
     padding: .5rem 2rem;
     border-bottom: 2px solid color.adjust(v.$grisClaro, $lightness: -10%);
     margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
+    //display: flex;
+    display: grid;
+    grid-template-columns: 3fr 2fr 1fr;
+
     align-items: center;
 
-    &:last-of-type{
+    &:last-of-type {
         border: none;
     }
 
@@ -45,7 +47,6 @@
     // Botones de opciones
 
     .opciones {
-
         display: flex;
         gap: 1rem;
 

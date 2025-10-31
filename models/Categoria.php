@@ -6,12 +6,13 @@ use Model\ActiveRecord;
 
 class Categoria extends ActiveRecord {
     protected static $tabla = 'categorias';
-    protected static $columnasDB = ['id', 'nombre', 'descripcion', 'fecha_creacion', 'fecha_actualizacion', 'restauranteId'];
+    protected static $columnasDB = ['id', 'nombre', 'descripcion', 'imagen', 'fecha_creacion', 'fecha_actualizacion', 'restauranteId'];
 
     public function __construct($args = []) {
         $this->id = $args['id'] ?? null;
         $this->nombre = $args['nombre'] ?? '';
         $this->descripcion = $args['descripcion'] ?? '';
+        $this->imagen = $args['imagen'] ?? '';
         $this->fecha_creacion = date('Y-m-d H:i:s');
         $this->fecha_actualizacion = date('Y-m-d H:i:s');
         $this->restauranteId = $args['restauranteId'] ?? null;

@@ -1,0 +1,120 @@
+@use 'sass:color';
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+
+.info-usuario {
+  display: flex;
+  flex-direction: column;
+
+  @include m.telefono{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+.info-restaurante {
+  display: flex;
+  flex-direction: column;
+
+  @include m.telefono {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 1rem;
+
+    .campo-restaurante {
+      grid-column: 1/5;
+    }
+
+    .campo-apertura {
+      grid-column: 5/7;
+    }
+
+    .campo-cierre {
+      grid-column: 7/9;
+    }
+
+    .campo-ubicacion {
+      grid-column: 1/9;
+    }
+
+    .campo-email {
+      grid-column: 1/5;
+    }
+
+    .campo-telefono {
+      grid-column: 5/9;
+    }
+    
+    .campo-cuenta {
+      grid-column: 1/5;
+    }
+    .campo-clabe {
+      grid-column: 5/9;
+    }
+  }
+}
+
+
+
+/* Estilo base para todos los fieldset */
+.mi-fieldset {
+  background: #ffffff;
+  border: none;
+  border-radius: 1.2rem;
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+/* Estilo del legend (título del fieldset) */
+.mi-fieldset legend {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: v.$blanco;
+  padding: .5rem 1.5rem 0.5rem 1.5rem;
+  background: v.$naranja;
+  position: absolute;
+  border-radius: .5rem;
+  top: -1.2rem;
+  left: 1.5rem;
+}
+
+/* Asegurar que los inputs tengan buen espaciado y estilo */
+.mi-fieldset .campo {
+  margin-bottom: 1rem;
+}
+
+.mi-fieldset label {
+  display: block;
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: #4a5568;
+  margin-bottom: 0.4rem;
+}
+
+.mi-fieldset input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #f8fafc;
+}
+
+.mi-fieldset input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+  background-color: #ffffff;
+}
+
+/* Inputs deshabilitados (como el campo "Usuario") */
+.mi-fieldset input:disabled {
+  background-color: #edf2f7;
+  color: #a0aec0;
+  cursor: not-allowed;
+}

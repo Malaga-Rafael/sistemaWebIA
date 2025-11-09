@@ -15,7 +15,7 @@ class OrdenController
     public static function index()
     {
 
-        session_start();
+        //session_start();
         isAuth();
 
         $restauranteId = $_SESSION['restauranteId'];
@@ -48,7 +48,7 @@ class OrdenController
                 return;
             }
 
-            session_start();
+            //session_start();
             $restauranteId = $_SESSION['restauranteId'] ?? null;
 
             if (!$restauranteId || $orden->restauranteId != $restauranteId) {
@@ -74,9 +74,9 @@ class OrdenController
         }
     }
 
-    public static function detalle()
+    /*    public static function detalle()
     {
-        session_start();
+        //session_start();
         isAuth();
 
         $ordenId = $_GET['id'];
@@ -110,11 +110,65 @@ class OrdenController
             ];
 
             $respuesta = [
+                'orden' => $orden,
                 'productos' => $productos,
                 'pago' => $pago
             ];
         }
 
         echo json_encode(['respuesta' => $respuesta]);
+    }
+*/
+
+    public static function detalle()
+    {
+        //session_start();
+        isAuth();
+
+        $ordenId = $_GET['id'] ?? null;
+        if (!$ordenId) {
+            echo json_encode(['error' => 'ID no válido']);
+            return;
+        }
+
+        $restauranteId = $_SESSION['restauranteId'] ?? null;
+        if (!$restauranteId) {
+            echo json_encode(['error' => 'Sesión inválida']);
+            return;
+        }
+
+        // 👉 Usa el nuevo método
+        $orden = Orden::findConDetalles($ordenId, $restauranteId);
+        if (!$orden) {
+            echo json_encode(['error' => 'Orden no encontrada o acceso denegado']);
+            return;
+        }
+
+        // Productos
+        $detalles = DetalleOrden::belongsTo('ordenId', $ordenId);
+        $productos = [];
+        foreach ($detalles as $detalle) {
+            $producto = Producto::find($detalle->productoId);
+            if ($producto) {
+                $productos[] = [
+                    'nombreProducto' => $producto->nombre,
+                    'cantidadProducto' => $detalle->cantidad,
+                    'precioProducto' => $producto->precio
+                ];
+            }
+        }
+
+        $pago = Pagos::where('ordenId', $orden->id);
+
+        // NOTA: El pago ya viene en $orden (metodoPago, estadoPago, montoPago)
+        // Así que ya no necesitas buscarlo aparte
+
+        echo json_encode([
+            'respuesta' => [
+                'orden' => $orden,
+                'productos' => $productos,
+                'pago' => $pago
+            ]
+        ], JSON_UNESCAPED_UNICODE);
     }
 }

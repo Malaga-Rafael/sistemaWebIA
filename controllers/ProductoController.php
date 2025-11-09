@@ -15,20 +15,27 @@ class ProductoController
 
         $categoria = Categoria::where('id', $categoriaId);
 
-        session_start();
+        //session_start();
 
         if (!$categoria || $categoria->restauranteId !== $_SESSION['restauranteId']) header('Location: /404');
 
         $productos = Producto::belongsTo('categoriaId', $categoria->id);
 
-        echo json_encode(['productos' => $productos]);
+        $existenciaProductos = [];
+        foreach ($productos as $producto) {
+            if ($producto->eliminado === '0') {
+                $existenciaProductos[] = $producto;
+            }
+        }
+
+        echo json_encode(['productos' => $existenciaProductos]);
     }
 
     /*    public static function crear()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            session_start();
+            //session_start();
 
             $categoriaId = $_POST['categoriaId'];
 
@@ -67,7 +74,7 @@ class ProductoController
     public static function crear()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            session_start();
+            //session_start();
 
             $categoriaId = $_POST['categoriaId'] ?? null;
             $categoria = Categoria::where('id', $categoriaId);
@@ -85,7 +92,7 @@ class ProductoController
             $imagen2Url = null;
 
             if (!empty($_FILES['imagen1']) && $_FILES['imagen1']['error'] === UPLOAD_ERR_OK) {
-                $imagen1Url = subirArchivoASupabase($_FILES['imagen1'],'Productos');
+                $imagen1Url = subirArchivoASupabase($_FILES['imagen1'], 'Productos');
             }
 
             if (!empty($_FILES['imagen2']) && $_FILES['imagen2']['error'] === UPLOAD_ERR_OK) {
@@ -133,7 +140,7 @@ class ProductoController
 
             $categoria = Categoria::where('id', $_POST['categoriaId']);
 
-            session_start();
+            //session_start();
 
             if (!$categoria || $categoria->restauranteId !== $_SESSION['restauranteId']) {
                 $respuesta = [
@@ -172,7 +179,7 @@ class ProductoController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $categoria = Categoria::where('id', $_POST['categoriaId'] ?? null);
-            session_start();
+            //session_start();
 
             if (!$categoria || $categoria->restauranteId !== $_SESSION['restauranteId']) {
                 echo json_encode(['respuesta' => [
@@ -254,7 +261,7 @@ class ProductoController
 
             $categoria = Categoria::where('id', $_POST['categoriaId']);
 
-            session_start();
+            //session_start();
 
             if (!$categoria || $categoria->restauranteId !== $_SESSION['restauranteId']) {
                 $respuesta = [
@@ -295,7 +302,7 @@ class ProductoController
             }
 
             $categoria = Categoria::where('id', $categoriaId);
-            session_start();
+            //session_start();
 
             if (!$categoria || $categoria->restauranteId !== $_SESSION['restauranteId']) {
                 echo json_encode([

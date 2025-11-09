@@ -27,7 +27,7 @@ class LoginController
                     Usuario::setAlerta('error', 'Usuario no existe o no esta confirmado');
                 } else {
                     if (password_verify($_POST['password'], $usuario->password)) {
-                        session_start();
+                        //session_start();
                         $_SESSION['id'] = $usuario->id;
                         $_SESSION['nombre'] = $usuario->nombre;
                         $_SESSION['email'] = $usuario->email;
@@ -53,7 +53,7 @@ class LoginController
 
     public static function logout()
     {
-        session_start();
+        //session_start();
 
         // Destruir todas las variables de sesión
         $_SESSION = [];

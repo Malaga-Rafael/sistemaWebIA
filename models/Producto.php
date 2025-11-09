@@ -6,7 +6,7 @@ class Producto extends ActiveRecord
 {
 
     protected static $tabla = 'productos';
-    protected static $columnasDB = ['id', 'nombre', 'descripcion', 'precio', 'imagen1', 'imagen2', 'disponible', 'fecha_creacion', 'fecha_actualizacion', 'categoriaId'];
+    protected static $columnasDB = ['id', 'nombre', 'descripcion', 'precio', 'imagen1', 'imagen2', 'disponible', 'fecha_creacion', 'fecha_actualizacion', 'eliminado', 'categoriaId'];
 
     public function __construct($args = [])
     {
@@ -19,6 +19,7 @@ class Producto extends ActiveRecord
         $this->disponible = $args['disponible'] ?? 1;
         $this->fecha_creacion = $args['fecha_creacion'] ?? ($this->id ? null : date('Y-m-d H:i:s'));
         $this->fecha_actualizacion = $args['fecha_actualizacion'] ?? date('Y-m-d H:i:s');
+        $this->eliminado = $args['eliminado'] ?? 0;
         $this->categoriaId = $args['categoriaId'] ?? '';
     }
 }

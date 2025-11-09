@@ -1,5 +1,9 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../includes/app.php';
 
 use Controllers\LoginController;
@@ -51,6 +55,9 @@ $router->get('/rol', [DashboardController::class, 'rol']);
 //ROLES
 $router->get('/crear-categoria', [DashboardController::class, 'crear_categoria']);
 $router->post('/crear-categoria', [DashboardController::class, 'crear_categoria']);
+
+// HISTORIAL
+$router->get('/historial', [DashboardController::class, 'historial']);
 
 // PERFIL
 $router->get('/perfil', [DashboardController::class, 'perfil']);

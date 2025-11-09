@@ -49,6 +49,7 @@
         .cerrar-modal {
             text-transform: uppercase;
             @include m.boton(v.$naranja, v.$blanco);
+            
         }
 
         &.animar {
@@ -133,7 +134,8 @@
                     cursor: pointer;
                 }
 
-                button {
+                button,
+                p {
                     border: none;
                     font-size: 1rem;
                     padding: .5rem 1rem;
@@ -141,11 +143,11 @@
                     font-weight: 900;
                     border-radius: 1rem;
 
-                    &:hover {
-                        cursor: pointer;
-                    }
                 }
-
+                
+                button:hover {
+                    cursor: pointer;
+                }
                 .pendiente {
                     background-color: color.adjust(v.$grisClaro, $lightness: -5%);
                     color: v.$negro;

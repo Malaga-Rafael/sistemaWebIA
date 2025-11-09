@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Document
    ========================================================================== */
@@ -393,7 +394,7 @@ p {
   margin-bottom: 0.5rem;
 }
 .formulario .campo input {
-  flex: 1;
+  font-size: 1.4rem;
   width: 100%;
   padding: 1rem;
   border: none;
@@ -1186,14 +1187,18 @@ p {
   align-items: center;
 }
 .orden .opciones button,
+.orden .opciones p,
 .orden .contenedor-estatus button,
+.orden .contenedor-estatus p,
 .producto-orden .opciones button,
-.producto-orden .contenedor-estatus button {
+.producto-orden .opciones p,
+.producto-orden .contenedor-estatus button,
+.producto-orden .contenedor-estatus p {
   border: none;
   font-size: 0.9rem;
   padding: 0.5rem 1rem;
   text-transform: uppercase;
-  font-weight: 900;
+  font-weight: 700;
   border-radius: 1rem;
 }
 .orden .opciones button:hover,
@@ -1207,14 +1212,78 @@ p {
 .producto-orden .opciones .detalle-orden,
 .producto-orden .contenedor-estatus .detalle-orden {
   background-color: #3498DB;
+  padding: 1.5rem 4rem;
   color: #FFFFFF;
+  font-size: 1.6rem;
+  display: inline-block;
+  font-weight: 700;
+  border: none;
+  transition-property: background-color;
+  transition-duration: 0.3s;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .orden .opciones .detalle-orden,
+  .orden .contenedor-estatus .detalle-orden,
+  .producto-orden .opciones .detalle-orden,
+  .producto-orden .contenedor-estatus .detalle-orden {
+    width: auto;
+  }
+}
+.orden .opciones .detalle-orden:hover,
+.orden .contenedor-estatus .detalle-orden:hover,
+.producto-orden .opciones .detalle-orden:hover,
+.producto-orden .contenedor-estatus .detalle-orden:hover {
+  background-color: rgb(95.3179916318, 173.9790794979, 226.6820083682);
+  cursor: pointer;
+}
+.orden .opciones .detalle-orden,
+.orden .contenedor-estatus .detalle-orden,
+.producto-orden .opciones .detalle-orden,
+.producto-orden .contenedor-estatus .detalle-orden {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
 }
 .orden .opciones .cancelar-orden,
 .orden .contenedor-estatus .cancelar-orden,
 .producto-orden .opciones .cancelar-orden,
 .producto-orden .contenedor-estatus .cancelar-orden {
-  background-color: rgb(169, 0, 0);
+  background-color: #E74C3C;
+  padding: 1.5rem 4rem;
   color: #FFFFFF;
+  font-size: 1.6rem;
+  display: inline-block;
+  font-weight: 700;
+  border: none;
+  transition-property: background-color;
+  transition-duration: 0.3s;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .orden .opciones .cancelar-orden,
+  .orden .contenedor-estatus .cancelar-orden,
+  .producto-orden .opciones .cancelar-orden,
+  .producto-orden .contenedor-estatus .cancelar-orden {
+    width: auto;
+  }
+}
+.orden .opciones .cancelar-orden:hover,
+.orden .contenedor-estatus .cancelar-orden:hover,
+.producto-orden .opciones .cancelar-orden:hover,
+.producto-orden .contenedor-estatus .cancelar-orden:hover {
+  background-color: rgb(236.5890410959, 117.6849315068, 105.4109589041);
+  cursor: pointer;
+}
+.orden .opciones .cancelar-orden,
+.orden .contenedor-estatus .cancelar-orden,
+.producto-orden .opciones .cancelar-orden,
+.producto-orden .contenedor-estatus .cancelar-orden {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
 }
 .orden .opciones .pendiente,
 .orden .contenedor-estatus .pendiente,
@@ -1224,9 +1293,13 @@ p {
   color: #000;
 }
 .orden .opciones .confirmada,
+.orden .opciones .confirmado,
 .orden .contenedor-estatus .confirmada,
+.orden .contenedor-estatus .confirmado,
 .producto-orden .opciones .confirmada,
-.producto-orden .contenedor-estatus .confirmada {
+.producto-orden .opciones .confirmado,
+.producto-orden .contenedor-estatus .confirmada,
+.producto-orden .contenedor-estatus .confirmado {
   background-color: #3498DB;
   color: #FFFFFF;
 }
@@ -1259,9 +1332,13 @@ p {
   color: #FFFFFF;
 }
 .orden .opciones .rechazada,
+.orden .opciones .rechazado,
 .orden .contenedor-estatus .rechazada,
+.orden .contenedor-estatus .rechazado,
 .producto-orden .opciones .rechazada,
-.producto-orden .contenedor-estatus .rechazada {
+.producto-orden .opciones .rechazado,
+.producto-orden .contenedor-estatus .rechazada,
+.producto-orden .contenedor-estatus .rechazado {
   background-color: #8E44AD;
   color: #FFFFFF;
 }
@@ -1424,7 +1501,8 @@ p {
   font-size: 1.4rem;
   cursor: pointer;
 }
-.modal.modal--grande .formulario .campo button {
+.modal.modal--grande .formulario .campo button,
+.modal.modal--grande .formulario .campo p {
   border: none;
   font-size: 1rem;
   padding: 0.5rem 1rem;
@@ -1529,4 +1607,113 @@ p {
   accent-color: #E65100;
   width: 1.6rem;
   height: 1.6rem;
+}
+
+.info-usuario {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 480px) {
+  .info-usuario {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+.info-restaurante {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 480px) {
+  .info-restaurante {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 1rem;
+  }
+  .info-restaurante .campo-restaurante {
+    grid-column: 1/5;
+  }
+  .info-restaurante .campo-apertura {
+    grid-column: 5/7;
+  }
+  .info-restaurante .campo-cierre {
+    grid-column: 7/9;
+  }
+  .info-restaurante .campo-ubicacion {
+    grid-column: 1/9;
+  }
+  .info-restaurante .campo-email {
+    grid-column: 1/5;
+  }
+  .info-restaurante .campo-telefono {
+    grid-column: 5/9;
+  }
+  .info-restaurante .campo-cuenta {
+    grid-column: 1/5;
+  }
+  .info-restaurante .campo-clabe {
+    grid-column: 5/9;
+  }
+}
+
+/* Estilo base para todos los fieldset */
+.mi-fieldset {
+  background: #ffffff;
+  border: none;
+  border-radius: 1.2rem;
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+/* Estilo del legend (título del fieldset) */
+.mi-fieldset legend {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+  background: #F59E0B;
+  position: absolute;
+  border-radius: 0.5rem;
+  top: -1.2rem;
+  left: 1.5rem;
+}
+
+/* Asegurar que los inputs tengan buen espaciado y estilo */
+.mi-fieldset .campo {
+  margin-bottom: 1rem;
+}
+
+.mi-fieldset label {
+  display: block;
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: #4a5568;
+  margin-bottom: 0.4rem;
+}
+
+.mi-fieldset input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #f8fafc;
+}
+
+.mi-fieldset input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+  background-color: #ffffff;
+}
+
+/* Inputs deshabilitados (como el campo "Usuario") */
+.mi-fieldset input:disabled {
+  background-color: #edf2f7;
+  color: #a0aec0;
+  cursor: not-allowed;
 }/*# sourceMappingURL=app.css.map */

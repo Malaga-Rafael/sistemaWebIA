@@ -17,6 +17,8 @@
             const respuesta = await fetch(url);
             const resultado = await respuesta.json();
             productos = resultado.productos || [];
+
+            console.log(resultado.productos);
             mostrarProductos();
         } catch (error) {
             console.log(error);

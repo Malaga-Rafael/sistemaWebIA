@@ -22,7 +22,7 @@ export function css (done){
     done()
 }
 
-//Minificar archivos de JS
+//Minificar archivos de JS 
 export function js (done){
     src(paths.js)
         .pipe(terser())

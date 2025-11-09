@@ -32,27 +32,36 @@
         justify-content: space-evenly;
         align-items: center;
 
-        button {
+        button, 
+        p {
             border: none;
             font-size: .9rem;
             padding: .5rem 1rem;
             text-transform: uppercase;
-            font-weight: 900;
+            font-weight: 700;
             border-radius: 1rem;
+        }
 
-            &:hover {
+        button:hover {
                 cursor: pointer;
-            }
         }
 
         .detalle-orden {
-            background-color: v.$azul;
-            color: v.$blanco;
+            @include m.boton(v.$azul, v.$blanco);
+            
+            & {
+                font-size: .9rem;
+                padding: .5rem 1rem;
+            }
         }
 
         .cancelar-orden {
-            background-color: v.$rojo;
-            color: v.$blanco;
+            @include m.boton(v.$rojoSuave, v.$blanco);
+
+            & {
+                font-size: .9rem;
+                padding: .5rem 1rem;
+            }
         }
 
         .pendiente {
@@ -60,7 +69,8 @@
             color: v.$negro;
         }
 
-        .confirmada {
+        .confirmada,
+        .confirmado {
             background-color: v.$azul;
             color: v.$blanco;
         }
@@ -85,7 +95,8 @@
             color: v.$blanco;
         }
 
-        .rechazada {
+        .rechazada,
+        .rechazado {
             background-color: v.$morado;
             color: v.$blanco;
         }

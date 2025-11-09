@@ -63,6 +63,38 @@ class ActiveRecord
         return array_shift($resultado);
     }
 
+    // En Model/Orden.php
+    public static function findConDetalles($id, $restauranteId)
+    {
+        $id = self::$db->escape_string($id);
+        $restauranteId = self::$db->escape_string($restauranteId);
+
+        $query = "
+            SELECT 
+                o.*,
+                DATE_FORMAT(o.hora_llegada, '%H:%i') AS hora_llegada,
+                CONCAT(c.nombre, ' ', c.apellido) AS nombreCliente,
+                e.nombre AS nombreEstatus,
+                COALESCE(d.direccion, 'No aplica') AS direccionCompleta,
+                COALESCE(d.referencia, '') AS direccionReferencia,
+                p.metodo_pago AS metodoPago,
+                p.estatus AS estadoPago,
+                p.monto AS montoPago,
+                p.comprobante AS comprobantePago
+            FROM ordenes o
+            INNER JOIN clientes c ON o.clienteId = c.id
+            INNER JOIN estatus_ordenes e ON o.estatusId = e.id
+            INNER JOIN pagos p ON o.id = p.ordenId
+            LEFT JOIN direcciones d ON o.direccionId = d.id
+            WHERE o.id = '{$id}'
+            AND o.restauranteId = '{$restauranteId}'
+            LIMIT 1
+        ";
+
+        $resultado = self::consultarSQL($query);
+        return !empty($resultado) ? $resultado[0] : null;
+    }
+
     public static function get($limite)
     {
         $query = "SELECT * FROM " . static::$tabla . " LIMIT ${limite} ";
@@ -147,12 +179,12 @@ class ActiveRecord
 
         $valores = [];
         foreach ($atributos as $key => $value) {
-    if ($value === null) {
-        $valores[] = "{$key} = NULL";
-    } else {
-        $valores[] = "{$key} = '" . self::$db->escape_string($value) . "'";
-    }
-}
+            if ($value === null) {
+                $valores[] = "{$key} = NULL";
+            } else {
+                $valores[] = "{$key} = '" . self::$db->escape_string($value) . "'";
+            }
+        }
 
         $query = "UPDATE " . static::$tabla . " SET ";
         $query .= join(', ', $valores);
@@ -214,17 +246,24 @@ class ActiveRecord
         $objeto->nombreEstatus = $registro['nombreEstatus'] ?? 'Sin estatus';
         $objeto->direccionCompleta = $registro['direccionCompleta'] ?? 'No aplica';
         $objeto->direccionReferencia = $registro['direccionReferencia'] ?? '';
+        
+        // Asignar campos para pagos
+        $objeto->metodoPago = $registro['metodoPago'] ?? '';
+        $objeto->estadoPago = $registro['estadoPago'] ?? '';
+        $objeto->montoPago = $registro['montoPago'] ?? '';
+        $objeto->comprobantePago = $registro['comprobantePago'] ?? '';
 
         return $objeto;
     }
 
     // En Model/Orden.php
-public static function ordenesConDetalles($restauranteId)
-{
-    $id = self::$db->escape_string($restauranteId);
-    $query = "
+    public static function ordenesConDetalles($restauranteId)
+    {
+        $id = self::$db->escape_string($restauranteId);
+        $query = "
         SELECT 
             o.*,
+            DATE_FORMAT(o.hora_llegada, '%H:%i') AS hora_llegada,
             CONCAT(c.nombre, ' ', c.apellido) AS nombreCliente,
             e.nombre AS nombreEstatus,
             COALESCE(d.direccion, 'No aplica') AS direccionCompleta,
@@ -234,14 +273,40 @@ public static function ordenesConDetalles($restauranteId)
         INNER JOIN estatus_ordenes e ON o.estatusId = e.id
         LEFT JOIN direcciones d ON o.direccionId = d.id
         WHERE o.restauranteId = '{$id}'          
-          AND o.fecha_creacion >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        AND o.estatusId IN (1, 2, 3, 4)
+        AND o.fecha_creacion >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
         ORDER BY o.fecha_creacion ASC
-    ";
+        ";
 
-    //AND o.estatusId IN (1, 2, 3) -- ajusta según tus IDs de estatus activos
+        return self::consultarSQL($query);
+    }
 
-    return self::consultarSQL($query);
-}
+        public static function ordenesHistorial($restauranteId)
+    {
+        $id = self::$db->escape_string($restauranteId);
+        $query = "
+        SELECT 
+            o.*,
+            DATE_FORMAT(o.hora_llegada, '%H:%i') AS hora_llegada,
+            CONCAT(c.nombre, ' ', c.apellido) AS nombreCliente,
+            e.nombre AS nombreEstatus,
+            COALESCE(d.direccion, 'No aplica') AS direccionCompleta,
+            COALESCE(d.referencia, '') AS direccionReferencia,
+            p.metodo_pago AS metodoPago,
+            p.estatus AS estadoPago,
+            p.monto AS montoPago
+        FROM ordenes o
+        INNER JOIN clientes c ON o.clienteId = c.id
+        INNER JOIN estatus_ordenes e ON o.estatusId = e.id
+        INNER JOIN pagos p ON o.id = p.ordenId
+        LEFT JOIN direcciones d ON o.direccionId = d.id
+        WHERE o.restauranteId = '{$id}'          
+        AND o.estatusId IN (5, 6, 7)
+        ORDER BY o.fecha_creacion DESC
+        ";
+
+        return self::consultarSQL($query);
+    }
 
     public function atributos()
     {
@@ -263,7 +328,6 @@ public static function ordenesConDetalles($restauranteId)
             } else {
                 $sanitizado[$key] = self::$db->escape_string($value);
             }
-            
         }
         return $sanitizado;
     }

@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Model\Categoria;
 use Model\Orden;
+use Model\Restaurante;
 use Model\Usuario;
 use MVC\Router;
 
@@ -12,7 +13,7 @@ class DashboardController
 
     public static function index(Router $router)
     {
-        session_start();
+        //session_start();
         isAuth();
 
         // === Evitar caché ===
@@ -32,7 +33,7 @@ class DashboardController
     public static function existencia(Router $router)
     {
 
-        session_start();
+        //session_start();
         isAuth();
 
         $restauranteId = $_SESSION['restauranteId'];
@@ -47,7 +48,7 @@ class DashboardController
 
     public static function crear_categoria(Router $router)
     {
-        session_start();
+        //session_start();
         isAuth();
 
         $alertas = [];
@@ -92,7 +93,7 @@ class DashboardController
     public static function categoria(Router $router)
     {
 
-        session_start();
+        //session_start();
         isAuth();
 
         $id = $_GET['id'];
@@ -113,7 +114,7 @@ class DashboardController
 
     public static function rol(Router $router)
     {
-        session_start();
+        //session_start();
         isAuth();
 
         $restauranteId = $_SESSION['restauranteId'];
@@ -124,18 +125,50 @@ class DashboardController
         ]);
     }
 
+    public static function historial(Router $router) {
+        //session_start();
+        isAuth();
+
+        $restauranteId = $_SESSION['restauranteId'];
+
+        $ordenes = Orden::ordenesHistorial($restauranteId);
+
+        //debuguear($ordenes);
+
+        $router->render('dashboard/historial', [
+            'titulo' => 'HISTORIAL',
+            'ordenes' => $ordenes
+        ]);
+    }
+
     public static function perfil(Router $router)
     {
-        session_start();
+        //session_start();
         isAuth();
         $alertas = [];
 
         $usuario = Usuario::find($_SESSION['id']);
+        $restaurante = Restaurante::find($_SESSION['restauranteId']);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $usuario->sincronizar($_POST);
+
+            //Asignar al usuario
+            $usuario->nombre = $_POST['nombre'];
+            $usuario->email = $_POST['email'];
+            $usuario->telefono = $_POST['telefono'];
+
+            //Asignar al restaurante
+            $restaurante->nombre = $_POST['nombre-restaurante'];
+            $restaurante->direccion = $_POST['direccion-restaurante'];
+            $restaurante->email = $_POST['email-restaurante'];
+            $restaurante->telefono = $_POST['telefono-restaurante'];
+            $restaurante->hora_apertura = $_POST['apertura-restaurante'];
+            $restaurante->hora_cierre = $_POST['cierre-restaurante'];
+            $restaurante->numero_cuenta = $_POST['cuenta-restaurante'];
+            $restaurante->clabe = $_POST['clabe-restaurante'];
 
             $alertas = $usuario->validar_perfil();
+            $alertas = $restaurante->validarInformacion();
 
             if (empty($alertas)) {
 
@@ -146,25 +179,29 @@ class DashboardController
                     $alertas = $usuario->getAlertas();
                 } else {
                     $usuario->guardar();
+                    $restaurante->guardar();
 
                     Usuario::setAlerta('exito', 'Guardado Correctamente');
                     $alertas = $usuario->getAlertas();
 
                     $_SESSION['nombre'] = $usuario->nombre;
                 }
+
+
             }
         }
 
         $router->render('dashboard/perfil', [
             'alertas' => $alertas,
             'titulo' => 'PERFIL',
-            'usuario' => $usuario
+            'usuario' => $usuario,
+            'restaurante' => $restaurante
         ]);
     }
 
     public static function cambiar_password(Router $router)
     {
-        session_start();
+        //session_start();
         isAuth();
 
         $alertas = [];

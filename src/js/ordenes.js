@@ -40,6 +40,8 @@
 
             ordenes = resultado.ordenes;
 
+            console.log('HORA LLEGADA: ', ordenes);
+
             const sitio = ordenes.filter(o => o.tipo_pedido === 'sitio');
             const domicilio = ordenes.filter(o => o.tipo_pedido === 'domicilio');
             const anticipado = ordenes.filter(o => o.tipo_pedido === 'anticipado');
@@ -92,7 +94,9 @@
             direccionEnvio.textContent = orden.direccionCompleta;
 
             const estado = document.createElement('TD');
-            estado.classList.add('contenedor-estatus');
+
+            const estadoDiv = document.createElement('DIV');
+            estadoDiv.classList.add('contenedor-estatus');
 
             const btnEstadoOrden = document.createElement('BUTTON');
             btnEstadoOrden.classList.add(`${orden.nombreEstatus.toLowerCase().replace(/\s+/g, '-')}`);
@@ -105,12 +109,18 @@
             const fechaOrden = document.createElement('TD');
             fechaOrden.textContent = orden.fecha_creacion;
 
+            const horaLlegada = document.createElement('TD');
+            horaLlegada.textContent = orden.hora_llegada;
+
             //const horaCompleta = orden.fecha_creacion.split(' ')[1]; // "13:15:00"
             //const horaMinuto = horaCompleta.slice(0, 5); // "13:15"
             //fechaOrden.textContent = horaMinuto;
 
             const opcionesDiv = document.createElement('TD');
-            opcionesDiv.classList.add('opciones');
+            //opcionesDiv.classList.add('opciones');
+
+            const botonesDiv = document.createElement('DIV');
+            botonesDiv.classList.add('opciones');
 
             // BOTON DE CANCELAR ORDEN
             const btnCancelarOrden = document.createElement('BUTTON');
@@ -129,10 +139,13 @@
                 mostrarFormularioOrden({ ...orden });
             }
 
-            opcionesDiv.appendChild(btnDetalleOrden);
-            opcionesDiv.appendChild(btnCancelarOrden);
+            botonesDiv.appendChild(btnDetalleOrden);
+            botonesDiv.appendChild(btnCancelarOrden);
 
-            estado.appendChild(btnEstadoOrden);
+            opcionesDiv.appendChild(botonesDiv);
+
+            estadoDiv.appendChild(btnEstadoOrden);
+            estado.appendChild(estadoDiv);
 
             contenedorOrden.appendChild(numeroOrden);
             contenedorOrden.appendChild(nombreCliente);
@@ -142,6 +155,11 @@
             }
             contenedorOrden.appendChild(estado);
             contenedorOrden.appendChild(fechaOrden);
+
+            if (orden.tipo_pedido === 'anticipado') {
+                contenedorOrden.appendChild(horaLlegada);
+            }
+
             contenedorOrden.appendChild(opcionesDiv);
 
             const listadoOrdenes = document.querySelector(selectorTabla);
@@ -159,22 +177,20 @@
 
             const { pago, productos } = resultado.respuesta;
 
+            console.log("info de pago: ", pago.metodo_pago , " ", pago.comprobante);
+            
             const modal = document.createElement('DIV');
             modal.classList.add('modal', 'modal--grande');
 
-            console.log(pago);
-
             let botonComprobante = ``;
 
-            if (pago !== null) {
-                console.log('pago es mayor que 0');
-                if (pago.metodo_pago === 'transferencia' && pago.comprobante) {
-                    botonComprobante = `
-                        <a href="${pago.comprobante}" target="_blank" rel="noopener noreferrer" class="ver-comprobante-btn" aria-label="Ver comprobante de pago">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-                    `;
-                }
+            if (pago.metodo_pago === 'transferencia') {
+                console.log('no se puede:')
+                botonComprobante = `
+                    <a href="${pago.comprobante}" target="_blank" rel="noopenernoreferrer" class="ver-comprobante-btn"aria-label="Ver comprobante de pago">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                `;
             }
 
             let productosHTML = '';

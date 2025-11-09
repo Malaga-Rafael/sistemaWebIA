@@ -4,12 +4,13 @@ namespace Model;
 
 class Orden extends ActiveRecord {
     protected static $tabla = 'ordenes';
-    protected static $columnasDB = ['id', 'fecha_creacion', 'tipo_pedido', 'nota', 'clienteId', 'restauranteId', 'estatusId', 'direccionId'];
+    protected static $columnasDB = ['id', 'fecha_creacion','hora_llegada', 'tipo_pedido', 'nota', 'clienteId', 'restauranteId', 'estatusId', 'direccionId'];
 
     public function __construct($args = [])
     {
         $this->id = $args['id'] ?? null;
         $this->fecha_creacion = $args['fecha_creacion'] ?? ($this->id ? null : date('Y-m-d H:i:s'));
+        $this->hora_llegada = $args['hora_llegada'] ?? NULL;
         $this->tipo_pedido = $args['tipo_pedido'] ?? null;
         $this->nota = $args['nota'] ?? '';
         $this->clienteId = $args['clienteId'] ?? '';

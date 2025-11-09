@@ -9,7 +9,7 @@
         <table class="contenedor-tabla" id="tabla-sitio">
             <thead class="encabezado-tabla">
                 <tr>
-                    <th>ID</th>
+                    <th>No.</th>
                     <th>Cliente</th>
                     <th>Estado</th>
                     <th>Fecha</th>
@@ -28,7 +28,7 @@
         <table class="contenedor-tabla" id="tabla-domicilio">
             <thead class="encabezado-tabla">
                 <tr>
-                    <th>ID</th>
+                    <th>No.</th>
                     <th>Cliente</th>
                     <th>Direccion</th>
                     <th>Estado</th>
@@ -48,10 +48,11 @@
         <table class="contenedor-tabla" id="tabla-anticipado">
             <thead class="encabezado-tabla">
                 <tr>
-                    <th>ID</th>
+                    <th>No.</th>
                     <th>Cliente</th>
                     <th>Estado</th>
                     <th>Fecha</th>
+                    <th>Llegada</th>
                     <th>Opciones</th>
                 </tr>
             </thead>

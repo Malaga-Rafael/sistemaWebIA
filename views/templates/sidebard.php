@@ -11,8 +11,9 @@
         <a class="<?php echo ($titulo === 'ORDENES') ? 'activo' : ''; ?>" href="/dashboard">ORDENES</a>
         <a class="<?php echo ($titulo === 'PRODUCTOS') ? 'activo' : ''; ?>" href="/existencia">PRODUCTOS</a>
         <a class="<?php echo ($titulo === 'AGREGAR CATEGORIA') ? 'activo' : ''; ?>" href="/crear-categoria">CATEGORIAS</a>
-        <a class="<?php echo ($titulo === 'ROLES') ? 'activo' : ''; ?>" href="/rol">ROLES</a>
-        <a class="<?php echo ($titulo === 'USUARIOS') ? 'activo' : ''; ?>" href="/usuario">USUARIOS</a>
+        <!-- <a class="<?php echo ($titulo === 'ROLES') ? 'activo' : ''; ?>" href="/rol">ROLES</a>
+        <a class="<?php echo ($titulo === 'USUARIOS') ? 'activo' : ''; ?>" href="/usuario">USUARIOS</a> -->
+        <a class="<?php echo ($titulo === 'HISTORIAL') ? 'activo' : ''; ?>" href="/historial">Historial</a>
         <a class="<?php echo ($titulo === 'PERFIL') ? 'activo' : ''; ?>" href="/perfil">Perfil</a>
     </nav>
 
